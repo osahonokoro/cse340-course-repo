@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -49,3 +50,20 @@ app.listen(PORT, () => {
     console.log(`Server is running at http://127.0.0.1:${PORT}`);
     console.log(`Environment: ${NODE_ENV}`);
 });
+=======
+import express from 'express';
+
+const NODE_ENV = 'production';
+const PORT = 3000;
+
+const app = express();
+
+app.get('/', (req, res) => {
+  res.send('Hello from Express!!!');
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running at http://127.0.0.1:${PORT}`);
+  console.log(`Environment: ${NODE_ENV}`);
+});
+>>>>>>> 557ed1bf87b0e8f46ba2bb4fb68c5b83f2226913
