@@ -2,9 +2,18 @@ import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import dotenv from 'dotenv';
+import { testConnection } from './src/models/db.js';
+import { getAllCategories } from './src/models/categories.js';
 
 // Load environment variables
 dotenv.config();
+
+// DEBUG: Check if .env is loading properly
+console.log('=== DEBUG INFO ===');
+console.log('DB_URL exists:', !!process.env.DB_URL);
+console.log('DB_URL value:', process.env.DB_URL ? process.env.DB_URL.substring(0, 50) + '...' : 'NOT FOUND');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('=================');
 
 // Define the application environment
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
@@ -40,12 +49,30 @@ app.get('/projects', (req, res) => {
     res.render('projects', { title: 'Service Projects' });
 });
 
-app.get('/categories', (req, res) => {
+/**app.get('/categories', (req, res) => {
     res.render('categories', { title: 'Categories' });
+}); */
+
+app.get('/categories', async (req, res) => {
+    try {
+        const categories = await getAllCategories();
+        res.render('categories', { 
+            title: 'Categories',
+            categories: categories 
+        });
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        res.status(500).send('Server Error');
+    }
 });
 
 // Start the server
-app.listen(PORT, () => {
-    console.log(`Server is running at http://127.0.0.1:${PORT}`);
-    console.log(`Environment: ${NODE_ENV}`);
+app.listen(PORT, async () => {
+    try {
+        await testConnection();
+        console.log(`Server is running at http://127.0.0.1:${PORT}`);
+        console.log(`Environment: ${NODE_ENV}`);
+    } catch (error) {
+        console.error('Error connecting to the database:', error);
+    }
 });
