@@ -36,6 +36,28 @@ app.set('views', path.join(__dirname, 'src/views'));
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// ============================================
+// MIDDLEWARE - ADD THESE TWO FUNCTIONS HERE
+// ============================================
+
+// Middleware 1: Log all incoming requests (development only)
+app.use((req, res, next) => {
+    if (NODE_ENV === 'development') {
+        console.log(`${req.method} ${req.url}`);
+    }
+    next();
+});
+
+// Middleware 2: Make NODE_ENV available to all templates
+app.use((req, res, next) => {
+    res.locals.NODE_ENV = NODE_ENV;
+    next();
+});
+
+// ============================================
+// ROUTES - All routes go AFTER middleware
+// ============================================
+
 /**
  * Routes
  */
@@ -68,10 +90,6 @@ app.get('/projects', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
-
-/**app.get('/categories', (req, res) => {
-    res.render('categories', { title: 'Categories' });
-}); */
 
 app.get('/categories', async (req, res) => {
     try {
