@@ -35,7 +35,6 @@ CREATE TABLE category (
 CREATE TABLE project (
     project_id SERIAL PRIMARY KEY,
     organization_id INTEGER NOT NULL REFERENCES organization(organization_id),
-    category_id INTEGER NOT NULL REFERENCES category(category_id),
     title VARCHAR(200) NOT NULL,
     description TEXT NOT NULL,
     date_needed DATE,
@@ -62,16 +61,89 @@ VALUES
     ('Health and Wellness', 'Projects promoting physical and mental health, healthcare access');
 
 -- ============================================
--- Insert project data
+-- 3. Create junction table (many-to-many)
+--    Allows one project to have multiple categories
 -- ============================================
-INSERT INTO project (organization_id, category_id, title, description, date_needed, status)
+CREATE TABLE project_category (
+    project_id INTEGER REFERENCES project(project_id) ON DELETE CASCADE,
+    category_id INTEGER REFERENCES category(category_id) ON DELETE CASCADE,
+    PRIMARY KEY (project_id, category_id)
+);
+
+-- ============================================
+-- Insert project data (5+ per organization = 15+ total)
+-- ============================================
+INSERT INTO project (organization_id, title, description, date_needed, status)
 VALUES 
-    (1, 1, 'Park Cleanup Initiative', 'Join BrightFuture Builders to clean and restore city parks. Supplies provided.', '2025-06-15', 'active'),
-    (1, 3, 'Community Garden Project', 'Help build a sustainable community garden in downtown area.', '2025-07-01', 'active'),
-    (2, 1, 'Urban Tree Planting', 'Plant trees in urban areas to improve air quality and green spaces.', '2025-06-30', 'active'),
-    (2, 2, 'Farm Education Workshop', 'Teach local residents about sustainable farming techniques.', '2025-07-10', 'active'),
-    (3, 3, 'Food Bank Distribution', 'Help sort and distribute food to families in need.', '2025-06-20', 'active'),
-    (3, 4, 'Senior Center Visits', 'Spend time with seniors, assist with activities and companionship.', '2025-07-05', 'active');
+    -- BrightFuture Builders (organization_id = 1) - 5 projects
+    (1, 'Park Cleanup Initiative', 'Join BrightFuture Builders to clean and restore city parks. Supplies provided.', '2025-06-15', 'active'),
+    (1, 'Community Garden Project', 'Help build a sustainable community garden in downtown area.', '2025-07-01', 'active'),
+    (1, 'School Playground Build', 'Build a new playground at Lincoln Elementary School.', '2025-08-10', 'active'),
+    (1, 'Senior Center Renovation', 'Help renovate the local senior center with new paint and furniture.', '2025-09-05', 'active'),
+    (1, 'Affordable Housing Project', 'Assist in building affordable homes for low-income families.', '2025-10-15', 'active'),
+    
+    -- GreenHarvest Growers (organization_id = 2) - 5 projects
+    (2, 'Urban Tree Planting', 'Plant trees in urban areas to improve air quality and green spaces.', '2025-06-30', 'active'),
+    (2, 'Farm Education Workshop', 'Teach local residents about sustainable farming techniques.', '2025-07-10', 'active'),
+    (2, 'Community Composting Program', 'Establish a composting program for local restaurants and homes.', '2025-08-20', 'active'),
+    (2, 'School Garden Initiative', 'Create teaching gardens at three elementary schools.', '2025-09-15', 'active'),
+    (2, 'Farmers Market Support', 'Help organize and run the weekly farmers market.', '2025-10-01', 'active'),
+    
+    -- UnityServe Volunteers (organization_id = 3) - 5 projects
+    (3, 'Food Bank Distribution', 'Help sort and distribute food to families in need.', '2025-06-20', 'active'),
+    (3, 'Senior Center Visits', 'Spend time with seniors, assist with activities and companionship.', '2025-07-05', 'active'),
+    (3, 'Clothing Drive', 'Organize and sort donated clothing for homeless shelters.', '2025-08-15', 'active'),
+    (3, 'After-School Tutoring', 'Tutor elementary students in reading and math.', '2025-09-10', 'active'),
+    (3, 'Disaster Relief Preparation', 'Prepare emergency kits and train volunteers for disaster response.', '2025-10-20', 'active');
+
+-- ============================================
+-- Insert project-category associations (many-to-many)
+-- ============================================
+INSERT INTO project_category (project_id, category_id) VALUES
+    -- Park Cleanup (project 1): Environmental
+    (1, 1),
+    
+    -- Community Garden (project 2): Environmental, Community Service
+    (2, 1), (2, 3),
+    
+    -- School Playground (project 3): Community Service
+    (3, 3),
+    
+    -- Senior Center Renovation (project 4): Community Service
+    (4, 3),
+    
+    -- Affordable Housing (project 5): Community Service
+    (5, 3),
+    
+    -- Urban Tree Planting (project 6): Environmental
+    (6, 1),
+    
+    -- Farm Education (project 7): Environmental, Educational
+    (7, 1), (7, 2),
+    
+    -- Community Composting (project 8): Environmental
+    (8, 1),
+    
+    -- School Garden (project 9): Environmental, Educational
+    (9, 1), (9, 2),
+    
+    -- Farmers Market (project 10): Community Service
+    (10, 3),
+    
+    -- Food Bank (project 11): Community Service
+    (11, 3),
+    
+    -- Senior Visits (project 12): Community Service, Health & Wellness
+    (12, 3), (12, 4),
+    
+    -- Clothing Drive (project 13): Community Service
+    (13, 3),
+    
+    -- After-School Tutoring (project 14): Educational
+    (14, 2),
+    
+    -- Disaster Relief (project 15): Community Service, Health & Wellness
+    (15, 3), (15, 4);
 
 -- ============================================
 -- Verify data (optional - for testing)

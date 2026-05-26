@@ -4,6 +4,8 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { testConnection } from './src/models/db.js';
 import { getAllCategories } from './src/models/categories.js';
+import { getAllOrganizations } from './src/models/organizations.js';
+import { getAllProjects } from './src/models/projects.js';
 
 // Load environment variables
 dotenv.config();
@@ -41,12 +43,30 @@ app.get('/', (req, res) => {
     res.render('home', { title: 'Home' });
 });
 
-app.get('/organizations', (req, res) => {
-    res.render('organizations', { title: 'Organizations' });
+app.get('/organizations', async (req, res) => {
+    try {
+        const organizations = await getAllOrganizations();
+        res.render('organizations', { 
+            title: 'Organizations',
+            organizations: organizations 
+        });
+    } catch (error) {
+        console.error('Error fetching organizations:', error);
+        res.status(500).send('Server Error');
+    }
 });
 
-app.get('/projects', (req, res) => {
-    res.render('projects', { title: 'Service Projects' });
+app.get('/projects', async (req, res) => {
+    try {
+        const projects = await getAllProjects();
+        res.render('projects', { 
+            title: 'Service Projects',
+            projects: projects 
+        });
+    } catch (error) {
+        console.error('Error fetching projects:', error);
+        res.status(500).send('Server Error');
+    }
 });
 
 /**app.get('/categories', (req, res) => {

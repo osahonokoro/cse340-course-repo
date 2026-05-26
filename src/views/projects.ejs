@@ -1,10 +1,21 @@
 ﻿<%- include('partials/header') %>
 
-        <h1>Upcoming Service Projects</h1>
-        <ul class="projects-list">
-            <li>Park Cleanup - Join us to clean up local parks and make them beautiful!</li>
-            <li>Food Drive - Help collect and distribute food to those in need.</li>
-            <li>Community Tutoring - Volunteer to tutor students in various subjects.</li>
-        </ul>
+<h1>Upcoming Service Projects</h1>
+
+<% if (projects && projects.length > 0) { %>
+    <ul class="projects-list">
+        <% projects.forEach(project => { %>
+            <li>
+                <h3><%= project.title %></h3>
+                <p><%= project.description %></p>
+                <p><strong>Organization:</strong> <%= project.organization_name %></p>
+                <p><strong>Categories:</strong> <%= project.categories.join(', ') %></p>
+                <p><strong>Date Needed:</strong> <%= project.date_needed %></p>
+            </li>
+        <% }) %>
+    </ul>
+<% } else { %>
+    <p>No active projects found.</p>
+<% } %>
 
 <%- include('partials/footer') %>
