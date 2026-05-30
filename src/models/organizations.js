@@ -20,9 +20,31 @@ const getAllOrganizations = async () => {
 };
 
 /**
+ * Get basic organization details by ID
+ * @param {number} organizationId - Organization ID
+ * @returns {Promise<Object|null>} Organization object or null
+ */
+const getOrganizationDetails = async (organizationId) => {
+    const query = `
+        SELECT
+            organization_id,
+            name,
+            description,
+            contact_email,
+            logo_filename
+        FROM organization
+        WHERE organization_id = $1;
+    `;
+    const queryParams = [organizationId];
+    const result = await db.query(query, queryParams);
+    
+    return result.rows.length > 0 ? result.rows[0] : null;
+};
+
+/**
  * Get organization by ID with its projects
  * @param {number} id - Organization ID
- * @returns {Promise<Object>} Organization object with projects
+ * @returns {Promise<Object>} Organization object with projects array
  */
 const getOrganizationById = async (id) => {
     const query = `
@@ -46,7 +68,6 @@ const getOrganizationById = async (id) => {
     
     if (result.rows.length === 0) return null;
     
-    // Transform rows into organization object with projects array
     const organization = {
         organization_id: result.rows[0].organization_id,
         name: result.rows[0].name,
@@ -67,4 +88,4 @@ const getOrganizationById = async (id) => {
     return organization;
 };
 
-export { getAllOrganizations, getOrganizationById };
+export { getAllOrganizations, getOrganizationDetails, getOrganizationById };

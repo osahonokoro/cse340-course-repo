@@ -3,9 +3,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import dotenv from 'dotenv';
 import { testConnection } from './src/models/db.js';
-import { getAllCategories } from './src/models/categories.js';
-import { getAllOrganizations } from './src/models/organizations.js';
-import { getAllProjects } from './src/models/projects.js';
+import router from './src/routes.js';
 
 // Load environment variables
 dotenv.config();
@@ -37,7 +35,7 @@ app.set('views', path.join(__dirname, 'src/views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ============================================
-// MIDDLEWARE - ADD THESE TWO FUNCTIONS HERE
+// MIDDLEWARE
 // ============================================
 
 // Middleware 1: Log all incoming requests (development only)
@@ -55,56 +53,39 @@ app.use((req, res, next) => {
 });
 
 // ============================================
-// ROUTES - All routes go AFTER middleware
+// ROUTES - Using the router from routes.js
 // ============================================
 
-/**
- * Routes
- */
-app.get('/', (req, res) => {
-    res.render('home', { title: 'Home' });
+// Use the imported router to handle all routes
+app.use(router);
+
+// ============================================
+// ERROR HANDLERS
+// ============================================
+
+// Catch-all route for 404 errors
+app.use((req, res, next) => {
+    const err = new Error('Page Not Found');
+    err.status = 404;
+    next(err);
 });
 
-app.get('/organizations', async (req, res) => {
-    try {
-        const organizations = await getAllOrganizations();
-        res.render('organizations', { 
-            title: 'Organizations',
-            organizations: organizations 
-        });
-    } catch (error) {
-        console.error('Error fetching organizations:', error);
-        res.status(500).send('Server Error');
-    }
+// Global error handler
+app.use((err, req, res, next) => {
+    console.error('Error occurred:', err.message);
+    const status = err.status || 500;
+    const context = {
+        title: status === 404 ? 'Page Not Found' : 'Server Error',
+        error: err.message,
+        stack: err.stack
+    };
+    res.status(status).render(`errors/${status}`, context);
 });
 
-app.get('/projects', async (req, res) => {
-    try {
-        const projects = await getAllProjects();
-        res.render('projects', { 
-            title: 'Service Projects',
-            projects: projects 
-        });
-    } catch (error) {
-        console.error('Error fetching projects:', error);
-        res.status(500).send('Server Error');
-    }
-});
+// ============================================
+// START SERVER
+// ============================================
 
-app.get('/categories', async (req, res) => {
-    try {
-        const categories = await getAllCategories();
-        res.render('categories', { 
-            title: 'Categories',
-            categories: categories 
-        });
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-        res.status(500).send('Server Error');
-    }
-});
-
-// Start the server
 app.listen(PORT, async () => {
     try {
         await testConnection();

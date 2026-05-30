@@ -30,6 +30,25 @@ const getAllProjects = async () => {
     return result.rows;
 };
 
+const getProjectsByOrganizationId = async (organizationId) => {
+    const query = `
+        SELECT
+            project_id,
+            organization_id,
+            title,
+            description,
+            date_needed,
+            status
+        FROM project
+        WHERE organization_id = $1
+        ORDER BY date_needed;
+    `;
+    const queryParams = [organizationId];
+    const result = await db.query(query, queryParams);
+    
+    return result.rows;
+};
+
 /**
  * Get a single project by ID with its organization and categories
  * @param {number} id - Project ID
@@ -60,4 +79,4 @@ const getProjectById = async (id) => {
     return result.rows[0] || null;
 };
 
-export { getAllProjects, getProjectById };
+export { getAllProjects, getProjectById, getProjectsByOrganizationId };
