@@ -5,6 +5,7 @@
 -- ============================================
 
 -- Drop tables if they exist (for fresh setup)
+DROP TABLE IF EXISTS project_category;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS organization;
 DROP TABLE IF EXISTS category;
@@ -61,7 +62,7 @@ VALUES
     ('Health and Wellness', 'Projects promoting physical and mental health, healthcare access');
 
 -- ============================================
--- 3. Create junction table (many-to-many)
+-- 4. Create junction table (many-to-many)
 --    Allows one project to have multiple categories
 -- ============================================
 CREATE TABLE project_category (
@@ -152,7 +153,10 @@ SELECT * FROM organization;
 SELECT * FROM category;
 SELECT * FROM project;
 
--- Join query to see all related data
+-- ============================================
+-- FIXED: Join query to see all related data
+-- Uses the junction table (project_category) to connect projects to categories
+-- ============================================
 SELECT 
     p.project_id,
     p.title,
@@ -162,5 +166,6 @@ SELECT
     p.status
 FROM project p
 JOIN organization o ON p.organization_id = o.organization_id
-JOIN category c ON p.category_id = c.category_id
+JOIN project_category pc ON p.project_id = pc.project_id
+JOIN category c ON pc.category_id = c.category_id
 ORDER BY p.date_needed;
