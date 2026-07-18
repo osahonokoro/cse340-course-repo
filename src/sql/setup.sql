@@ -147,25 +147,24 @@ INSERT INTO project_category (project_id, category_id) VALUES
     (15, 3), (15, 4);
 
 -- ============================================
--- Verify data (optional - for testing)
+-- Verification queries (optional — for manual testing only)
+-- Commented out so this script only performs setup when run.
+-- Uncomment locally in pgAdmin if you want to sanity-check the data.
 -- ============================================
-SELECT * FROM organization;
-SELECT * FROM category;
-SELECT * FROM project;
 
--- ============================================
--- FIXED: Join query to see all related data
--- Uses the junction table (project_category) to connect projects to categories
--- ============================================
-SELECT 
-    p.project_id,
-    p.title,
-    o.name AS organization_name,
-    c.name AS category_name,
-    p.date_needed,
-    p.status
-FROM project p
-JOIN organization o ON p.organization_id = o.organization_id
-JOIN project_category pc ON p.project_id = pc.project_id
-JOIN category c ON pc.category_id = c.category_id
-ORDER BY p.date_needed;
+-- SELECT * FROM organization;
+-- SELECT * FROM category;
+-- SELECT * FROM project;
+
+-- SELECT 
+--     p.project_id,
+--     p.title,
+--     o.name AS organization_name,
+--     c.name AS category_name,
+--     p.date_needed,
+--     p.status
+-- FROM project p
+-- JOIN organization o ON p.organization_id = o.organization_id
+-- JOIN project_category pc ON p.project_id = pc.project_id
+-- JOIN category c ON pc.category_id = c.category_id
+-- ORDER BY p.date_needed;

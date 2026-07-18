@@ -1,12 +1,10 @@
+
+import 'dotenv/config';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import dotenv from 'dotenv';
 import { testConnection } from './src/models/db.js';
 import router from './src/routes.js';
-
-// Load environment variables
-dotenv.config();
 
 // DEBUG: Check if .env is loading properly
 console.log('=== DEBUG INFO ===');
