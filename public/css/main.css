@@ -63,11 +63,13 @@ h1 {
 .organizations-list, .projects-list, .categories-list {
     list-style: none;
     margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
 }
 
 .organizations-list li, .projects-list li, .categories-list li {
     background: white;
-    margin: 1rem 0;
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
