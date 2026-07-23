@@ -1,4 +1,6 @@
-﻿import { getAllProjects, getProjectById } from '../models/projects.js';
+﻿import { getAllProjects, getProjectById, getUpcomingProjects } from '../models/projects.js';
+
+const NUMBER_OF_UPCOMING_PROJECTS = 5;
 
 /**
  * Controller for the projects list page
@@ -6,8 +8,8 @@
  */
 const showProjectsPage = async (req, res) => {
     try {
-        const projects = await getAllProjects();
-        const title = 'Service Projects';
+        const projects = await getUpcomingProjects(NUMBER_OF_UPCOMING_PROJECTS);
+        const title = 'Upcoming Service Projects';
         res.render('projects', { title, projects });
     } catch (error) {
         console.error('Error fetching projects:', error);

@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+
+<h1><%= project.title %></h1>
+
+<div class="project-details">
+    <p><%= project.description %></p>
+
+    <p><strong>Date Needed:</strong> <%= project.date_needed %></p>
+    <p><strong>Status:</strong> <%= project.status %></p>
+
+    <% if (project.categories && project.categories.length > 0) { %>
+        <p><strong>Categories:</strong> <%= project.categories.join(', ') %></p>
+    <% } %>
+
+    <p><strong>Organization:</strong>
+        <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+    </p>
+</div>
+
+<%- include('partials/footer') %>

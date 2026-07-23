@@ -30,6 +30,54 @@ const getAllProjects = async () => {
     return result.rows;
 };
 
+/**
+ * Get the next N upcoming active projects
+ * @param {number} numberOfProjects - How many upcoming projects to retrieve
+ * @returns {Promise<Array>} Array of upcoming project objects
+ */
+const getUpcomingProjects = async (numberOfProjects) => {
+    const query = `
+        SELECT 
+            p.project_id,
+            p.title,
+            p.description,
+            p.date_needed,
+            p.status,
+            o.organization_id,
+            o.name as organization_name
+        FROM project p
+        JOIN organization o ON p.organization_id = o.organization_id
+        WHERE p.status = 'active' AND p.date_needed >= CURRENT_DATE
+        ORDER BY p.date_needed ASC
+        LIMIT $1
+    `;
+    const result = await db.query(query, [numberOfProjects]);
+    return result.rows;
+};
+
+/**
+ * Get full details for a single project by ID (title, description, date, org)
+ * @param {number} id - Project ID
+ * @returns {Promise<Object|null>} Project object or null
+ */
+const getProjectDetails = async (id) => {
+    const query = `
+        SELECT 
+            p.project_id,
+            p.title,
+            p.description,
+            p.date_needed,
+            p.status,
+            o.organization_id,
+            o.name as organization_name
+        FROM project p
+        JOIN organization o ON p.organization_id = o.organization_id
+        WHERE p.project_id = $1
+    `;
+    const result = await db.query(query, [id]);
+    return result.rows[0] || null;
+};
+
 const getProjectsByOrganizationId = async (organizationId) => {
     const query = `
         SELECT
@@ -70,8 +118,8 @@ const getProjectById = async (id) => {
             ARRAY_AGG(c.category_id) as category_ids
         FROM project p
         JOIN organization o ON p.organization_id = o.organization_id
-        JOIN project_category pc ON p.project_id = pc.project_id
-        JOIN category c ON pc.category_id = c.category_id
+        LEFT JOIN project_category pc ON p.project_id = pc.project_id
+        LEFT JOIN category c ON pc.category_id = c.category_id
         WHERE p.project_id = $1
         GROUP BY p.project_id, o.organization_id, o.name, o.contact_email, o.logo_filename
     `;
@@ -79,4 +127,4 @@ const getProjectById = async (id) => {
     return result.rows[0] || null;
 };
 
-export { getAllProjects, getProjectById, getProjectsByOrganizationId };
+export { getAllProjects, getProjectById, getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails };
