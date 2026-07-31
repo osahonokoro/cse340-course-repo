@@ -68,6 +68,7 @@ const getProjectDetails = async (id) => {
             p.description,
             p.date_needed,
             p.status,
+            p.location,
             o.organization_id,
             o.name as organization_name
         FROM project p
@@ -110,6 +111,7 @@ const getProjectById = async (id) => {
             p.description,
             p.date_needed,
             p.status,
+            p.location,
             o.organization_id,
             o.name as organization_name,
             o.contact_email as organization_email,
@@ -127,4 +129,43 @@ const getProjectById = async (id) => {
     return result.rows[0] || null;
 };
 
-export { getAllProjects, getProjectById, getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails };
+/**
+ * Updates an existing project in the database.
+ * @param {number} projectId - The ID of the project to update.
+ * @param {string} title - The new title of the project.
+ * @param {string} description - The new description of the project.
+ * @param {string} dateNeeded - The new date needed for the project.
+ * @param {string} status - The new status of the project.
+ * @param {number} organizationId - The new organization ID for the project.
+ * @param {string} location - The new location of the project.
+ * @returns {object} The updated project data.
+ */
+const updateProject = async (projectId, title, description, dateNeeded, status, organizationId, location) => {
+    const query = `
+        UPDATE project 
+        SET 
+            title = $1, 
+            description = $2, 
+            date_needed = $3, 
+            status = $4, 
+            organization_id = $5,
+            location = $6
+        WHERE project_id = $7
+        RETURNING *
+    `;
+
+    const queryParams = [title, description, dateNeeded, status, organizationId, location, projectId];
+    const result = await db.query(query, queryParams);
+
+    if (result.rows.length === 0) {
+        throw new Error('Project not found or update failed');
+    }
+
+    if (process.env.ENABLE_SQL_LOGGING === 'true') {
+        console.log('Updated project with ID:', projectId);
+    }
+
+    return result.rows[0];
+};
+
+export { getAllProjects, getProjectById, getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails, updateProject };

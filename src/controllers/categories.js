@@ -1,9 +1,5 @@
-﻿import { getAllCategories } from '../models/categories.js';
+﻿import { getAllCategories, getCategoryById, getProjectsByCategoryId } from '../models/categories.js';
 
-/**
- * Controller for the categories list page
- * GET /categories
- */
 const showCategoriesPage = async (req, res) => {
     try {
         const categories = await getAllCategories();
@@ -15,4 +11,27 @@ const showCategoriesPage = async (req, res) => {
     }
 };
 
-export { showCategoriesPage };
+/**
+ * Controller for the category details page
+ * GET /category/:id
+ */
+const showCategoryDetailsPage = async (req, res) => {
+    try {
+        const categoryId = req.params.id;
+        const category = await getCategoryById(categoryId);
+
+        if (!category) {
+            return res.status(404).send('Category not found');
+        }
+
+        const projects = await getProjectsByCategoryId(categoryId);
+        const title = category.name;
+
+        res.render('category', { title, category, projects });
+    } catch (error) {
+        console.error('Error fetching category details:', error);
+        res.status(500).send('Server Error');
+    }
+};
+
+export { showCategoriesPage, showCategoryDetailsPage };

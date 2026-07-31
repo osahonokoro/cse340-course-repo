@@ -7,14 +7,21 @@
 
     <p><strong>Date Needed:</strong> <%= project.date_needed %></p>
     <p><strong>Status:</strong> <%= project.status %></p>
+    <p><strong>Location:</strong> <%= project.location %></p>
 
     <% if (project.categories && project.categories.length > 0) { %>
-        <p><strong>Categories:</strong> <%= project.categories.join(', ') %></p>
+    <p><strong>Categories:</strong>
+        <% project.categories.forEach((catName, index) => { %>
+            <a href="/category/<%= project.category_ids[index] %>" class="category-tag"><%= catName %></a><% if (index < project.categories.length - 1) { %>, <% } %>
+        <% }); %>
+    </p>
     <% } %>
 
     <p><strong>Organization:</strong>
         <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
     </p>
+
+    <p><a href="/edit-project/<%= project.project_id %>">Edit Project</a></p>
 </div>
 
 <%- include('partials/footer') %>

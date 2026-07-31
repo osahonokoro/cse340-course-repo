@@ -32,6 +32,9 @@ app.set('views', path.join(__dirname, 'src/views'));
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Parse URL-encoded form data (needed for all POST form submissions)
+app.use(express.urlencoded({ extended: true }));
+
 // ============================================
 // MIDDLEWARE
 // ============================================
