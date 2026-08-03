@@ -168,4 +168,25 @@ const updateProject = async (projectId, title, description, dateNeeded, status, 
     return result.rows[0];
 };
 
-export { getAllProjects, getProjectById, getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails, updateProject };
+/**
+ * Create a new project
+ * @param {string} title
+ * @param {string} description
+ * @param {string} dateNeeded
+ * @param {string} status
+ * @param {number} organizationId
+ * @param {string} location
+ * @returns {Promise<Object>} The created project
+ */
+const createProject = async (title, description, dateNeeded, status, organizationId, location) => {
+    const query = `
+        INSERT INTO project (title, description, date_needed, status, organization_id, location)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *
+    `;
+    const queryParams = [title, description, dateNeeded, status, organizationId, location];
+    const result = await db.query(query, queryParams);
+    return result.rows[0];
+};
+
+export { getAllProjects, getProjectById, getProjectsByOrganizationId, getUpcomingProjects, getProjectDetails, updateProject, createProject };

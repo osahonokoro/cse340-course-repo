@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+<main>
+    <h1><%= title %></h1>
+
+    <% if (errors && errors.length > 0) { %>
+        <div class="error-messages">
+            <ul>
+                <% errors.forEach(error => { %>
+                    <li><%= error.msg %></li>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
+
+    <form action="/new-project" method="POST">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" value="<%= title_field %>" required maxlength="200">
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" required><%= description %></textarea>
+
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" value="<%= location %>" required maxlength="255">
+
+        <label for="dateNeeded">Date Needed</label>
+        <input type="date" id="dateNeeded" name="dateNeeded" value="<%= dateNeeded %>" required>
+
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+            <option value="active" <%= status === 'active' ? 'selected' : '' %>>Active</option>
+            <option value="completed" <%= status === 'completed' ? 'selected' : '' %>>Completed</option>
+            <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+        </select>
+
+        <label for="organizationId">Organization</label>
+        <select id="organizationId" name="organizationId" required>
+            <option value="">-- Select an organization --</option>
+            <% organizations.forEach(org => { %>
+                <option value="<%= org.organization_id %>" <%= String(org.organization_id) === String(organizationId) ? 'selected' : '' %>>
+                    <%= org.name %>
+                </option>
+            <% }) %>
+        </select>
+
+        <button type="submit">Create Project</button>
+    </form>
+</main>
+<%- include('partials/footer') %>

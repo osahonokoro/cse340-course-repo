@@ -1,6 +1,7 @@
-
 import 'dotenv/config';
 import express from 'express';
+import session from 'express-session';
+import flash from 'connect-flash';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { testConnection } from './src/models/db.js';
@@ -34,6 +35,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Parse URL-encoded form data (needed for all POST form submissions)
 app.use(express.urlencoded({ extended: true }));
+
+// Session support (required for flash messages)
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'cse340-service-network-secret',
+    resave: false,
+    saveUninitialized: false
+}));
+
+// Flash messages
+app.use(flash());
+
+// Make flash messages available to all views
+app.use((req, res, next) => {
+    res.locals.successMessage = req.flash('success');
+    res.locals.errorMessage = req.flash('error');
+    next();
+});
 
 // ============================================
 // MIDDLEWARE

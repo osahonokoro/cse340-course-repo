@@ -18,3 +18,9 @@
         </nav>
     </header>
     <main>
+        <% if (successMessage && successMessage.length > 0) { %>
+            <div class="flash-message flash-success"><%= successMessage[0] %></div>
+        <% } %>
+        <% if (errorMessage && errorMessage.length > 0) { %>
+            <div class="flash-message flash-error"><%= errorMessage[0] %></div>
+        <% } %>

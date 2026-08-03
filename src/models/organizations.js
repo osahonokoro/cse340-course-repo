@@ -1,9 +1,5 @@
 import db from './db.js';
 
-/**
- * Get all organizations from the database
- * @returns {Promise<Array>} Array of organization objects
- */
 const getAllOrganizations = async () => {
     const query = `
         SELECT 
@@ -19,11 +15,6 @@ const getAllOrganizations = async () => {
     return result.rows;
 };
 
-/**
- * Get basic organization details by ID
- * @param {number} organizationId - Organization ID
- * @returns {Promise<Object|null>} Organization object or null
- */
 const getOrganizationDetails = async (organizationId) => {
     const query = `
         SELECT
@@ -41,11 +32,6 @@ const getOrganizationDetails = async (organizationId) => {
     return result.rows.length > 0 ? result.rows[0] : null;
 };
 
-/**
- * Get organization by ID with its projects
- * @param {number} id - Organization ID
- * @returns {Promise<Object>} Organization object with projects array
- */
 const getOrganizationById = async (id) => {
     const query = `
         SELECT 
@@ -88,4 +74,46 @@ const getOrganizationById = async (id) => {
     return organization;
 };
 
-export { getAllOrganizations, getOrganizationDetails, getOrganizationById };
+/**
+ * Create a new organization
+ * @param {string} name
+ * @param {string} description
+ * @param {string} contactEmail
+ * @returns {Promise<Object>} The created organization
+ */
+const createOrganization = async (name, description, contactEmail) => {
+    const query = `
+        INSERT INTO organization (name, description, contact_email, logo_filename)
+        VALUES ($1, $2, $3, $4)
+        RETURNING *
+    `;
+    const defaultLogo = 'default-logo.png';
+    const result = await db.query(query, [name, description, contactEmail, defaultLogo]);
+    return result.rows[0];
+};
+
+/**
+ * Update an existing organization
+ * @param {number} id
+ * @param {string} name
+ * @param {string} description
+ * @param {string} contactEmail
+ * @returns {Promise<Object>} The updated organization
+ */
+const updateOrganization = async (id, name, description, contactEmail) => {
+    const query = `
+        UPDATE organization
+        SET name = $1, description = $2, contact_email = $3
+        WHERE organization_id = $4
+        RETURNING *
+    `;
+    const result = await db.query(query, [name, description, contactEmail, id]);
+
+    if (result.rows.length === 0) {
+        throw new Error(`Organization not found with id: ${id}`);
+    }
+
+    return result.rows[0];
+};
+
+export { getAllOrganizations, getOrganizationDetails, getOrganizationById, createOrganization, updateOrganization };
