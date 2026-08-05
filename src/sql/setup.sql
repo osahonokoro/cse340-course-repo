@@ -39,7 +39,8 @@ CREATE TABLE project (
     title VARCHAR(200) NOT NULL,
     description TEXT NOT NULL,
     date_needed DATE,
-    status VARCHAR(50) DEFAULT 'active' NOT NULL
+    status VARCHAR(50) DEFAULT 'active' NOT NULL,
+    location VARCHAR(255)
 );
 
 -- ============================================
@@ -74,28 +75,28 @@ CREATE TABLE project_category (
 -- ============================================
 -- Insert project data (5+ per organization = 15+ total)
 -- ============================================
-INSERT INTO project (organization_id, title, description, date_needed, status)
+INSERT INTO project (organization_id, title, description, date_needed, status, location)
 VALUES 
     -- BrightFuture Builders (organization_id = 1) - 5 projects
-    (1, 'Park Cleanup Initiative', 'Join BrightFuture Builders to clean and restore city parks. Supplies provided.', '2025-06-15', 'active'),
-    (1, 'Community Garden Project', 'Help build a sustainable community garden in downtown area.', '2025-07-01', 'active'),
-    (1, 'School Playground Build', 'Build a new playground at Lincoln Elementary School.', '2025-08-10', 'active'),
-    (1, 'Senior Center Renovation', 'Help renovate the local senior center with new paint and furniture.', '2025-09-05', 'active'),
-    (1, 'Affordable Housing Project', 'Assist in building affordable homes for low-income families.', '2025-10-15', 'active'),
+    (1, 'Park Cleanup Initiative', 'Join BrightFuture Builders to clean and restore city parks. Supplies provided.', '2025-06-15', 'active', 'Riverside Park, Springfield'),
+    (1, 'Community Garden Project', 'Help build a sustainable community garden in downtown area.', '2025-07-01', 'active', 'Downtown Community Lot, Springfield'),
+    (1, 'School Playground Build', 'Build a new playground at Lincoln Elementary School.', '2025-08-10', 'active', 'Lincoln Elementary School, Springfield'),
+    (1, 'Senior Center Renovation', 'Help renovate the local senior center with new paint and furniture.', '2025-09-05', 'active', 'Maple Street Senior Center, Springfield'),
+    (1, 'Affordable Housing Project', 'Assist in building affordable homes for low-income families.', '2025-10-15', 'active', 'Oakwood District, Springfield'),
     
     -- GreenHarvest Growers (organization_id = 2) - 5 projects
-    (2, 'Urban Tree Planting', 'Plant trees in urban areas to improve air quality and green spaces.', '2025-06-30', 'active'),
-    (2, 'Farm Education Workshop', 'Teach local residents about sustainable farming techniques.', '2025-07-10', 'active'),
-    (2, 'Community Composting Program', 'Establish a composting program for local restaurants and homes.', '2025-08-20', 'active'),
-    (2, 'School Garden Initiative', 'Create teaching gardens at three elementary schools.', '2025-09-15', 'active'),
-    (2, 'Farmers Market Support', 'Help organize and run the weekly farmers market.', '2025-10-01', 'active'),
+    (2, 'Urban Tree Planting', 'Plant trees in urban areas to improve air quality and green spaces.', '2025-06-30', 'active', 'Elm Avenue Greenway, Springfield'),
+    (2, 'Farm Education Workshop', 'Teach local residents about sustainable farming techniques.', '2025-07-10', 'active', 'GreenHarvest Learning Farm, Springfield'),
+    (2, 'Community Composting Program', 'Establish a composting program for local restaurants and homes.', '2025-08-20', 'active', 'Westside Composting Yard, Springfield'),
+    (2, 'School Garden Initiative', 'Create teaching gardens at three elementary schools.', '2025-09-15', 'active', 'Roosevelt Elementary School, Springfield'),
+    (2, 'Farmers Market Support', 'Help organize and run the weekly farmers market.', '2025-10-01', 'active', 'Town Square Market, Springfield'),
     
     -- UnityServe Volunteers (organization_id = 3) - 5 projects
-    (3, 'Food Bank Distribution', 'Help sort and distribute food to families in need.', '2025-06-20', 'active'),
-    (3, 'Senior Center Visits', 'Spend time with seniors, assist with activities and companionship.', '2025-07-05', 'active'),
-    (3, 'Clothing Drive', 'Organize and sort donated clothing for homeless shelters.', '2025-08-15', 'active'),
-    (3, 'After-School Tutoring', 'Tutor elementary students in reading and math.', '2025-09-10', 'active'),
-    (3, 'Disaster Relief Preparation', 'Prepare emergency kits and train volunteers for disaster response.', '2025-10-20', 'active');
+    (3, 'Food Bank Distribution', 'Help sort and distribute food to families in need.', '2025-06-20', 'active', 'UnityServe Food Bank, Springfield'),
+    (3, 'Senior Center Visits', 'Spend time with seniors, assist with activities and companionship.', '2025-07-05', 'active', 'Maple Street Senior Center, Springfield'),
+    (3, 'Clothing Drive', 'Organize and sort donated clothing for homeless shelters.', '2025-08-15', 'active', 'UnityServe Donation Center, Springfield'),
+    (3, 'After-School Tutoring', 'Tutor elementary students in reading and math.', '2025-09-10', 'active', 'Jefferson Public Library, Springfield'),
+    (3, 'Disaster Relief Preparation', 'Prepare emergency kits and train volunteers for disaster response.', '2025-10-20', 'active', 'Emergency Services Warehouse, Springfield');
 
 -- ============================================
 -- Insert project-category associations (many-to-many)
