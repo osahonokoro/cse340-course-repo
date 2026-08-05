@@ -71,6 +71,19 @@ app.use((req, res, next) => {
     next();
 });
 
+// Middleware 3: Make login state and user info available to all templates
+app.use((req, res, next) => {
+    res.locals.isLoggedIn = false;
+    res.locals.user = null;
+
+    if (req.session && req.session.user) {
+        res.locals.isLoggedIn = true;
+        res.locals.user = req.session.user;
+    }
+
+    next();
+});
+
 // ============================================
 // ROUTES - Using the router from routes.js
 // ============================================

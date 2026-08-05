@@ -9,6 +9,8 @@ DROP TABLE IF EXISTS project_category;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS organization;
 DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
 
 -- ============================================
 -- 1. Create organization table
@@ -148,6 +150,31 @@ INSERT INTO project_category (project_id, category_id) VALUES
     (15, 3), (15, 4);
 
 -- ============================================
+-- 5. Create roles table
+-- ============================================
+CREATE TABLE roles (
+    role_id SERIAL PRIMARY KEY,
+    role_name VARCHAR(50) UNIQUE NOT NULL,
+    role_description TEXT
+);
+
+INSERT INTO roles (role_name, role_description) VALUES 
+    ('user', 'Standard user with basic access'),
+    ('admin', 'Administrator with full system access');
+
+-- ============================================
+-- 6. Create users table
+-- ============================================
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role_id INTEGER REFERENCES roles(role_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================
 -- Verification queries (optional — for manual testing only)
 -- Commented out so this script only performs setup when run.
 -- Uncomment locally in pgAdmin if you want to sanity-check the data.
@@ -156,6 +183,8 @@ INSERT INTO project_category (project_id, category_id) VALUES
 -- SELECT * FROM organization;
 -- SELECT * FROM category;
 -- SELECT * FROM project;
+-- SELECT * FROM roles;
+-- SELECT * FROM users;
 
 -- SELECT 
 --     p.project_id,

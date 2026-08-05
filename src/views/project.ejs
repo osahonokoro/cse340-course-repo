@@ -21,8 +21,10 @@
         <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
     </p>
 
-    <p><a href="/edit-project/<%= project.project_id %>">Edit Project</a></p>
-    <p><a href="/assign-categories/<%= project.project_id %>">Assign Categories</a></p>
+    <% if (user && user.role_name === 'admin') { %>
+        <p><a href="/edit-project/<%= project.project_id %>">Edit Project</a></p>
+        <p><a href="/assign-categories/<%= project.project_id %>">Assign Categories</a></p>
+    <% } %>
 </div>
 
 <%- include('partials/footer') %>
