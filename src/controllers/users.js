@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import { createUser, authenticateUser, getAllUsers } from '../models/users.js';
+import { getVolunteerProjectsForUser, removeVolunteer } from '../models/volunteers.js';
 
 const saltRounds = 10;
 
@@ -96,9 +97,15 @@ const requireRole = (role) => {
 /**
  * GET /dashboard
  */
-const showDashboard = (req, res) => {
-    const { name, email } = req.session.user;
-    res.render('dashboard', { title: 'Dashboard', name, email });
+const showDashboard = async (req, res) => {
+    try {
+        const { user_id, name, email } = req.session.user;
+        const volunteerProjects = await getVolunteerProjectsForUser(user_id);
+        res.render('dashboard', { title: 'Dashboard', name, email, volunteerProjects });
+    } catch (error) {
+        console.error('Error loading dashboard:', error);
+        res.status(500).send('Server Error');
+    }
 };
 
 /**
@@ -114,6 +121,25 @@ const showUsersPage = async (req, res) => {
     }
 };
 
+/**
+ * Controller to remove a volunteer signup from the dashboard
+ * POST /dashboard/unvolunteer/:id
+ */
+const processDashboardRemoveVolunteer = async (req, res) => {
+    try {
+        const projectId = req.params.id;
+        const userId = req.session.user.user_id;
+
+        await removeVolunteer(userId, projectId);
+
+        req.flash('success', 'You have been removed as a volunteer.');
+        res.redirect('/dashboard');
+    } catch (error) {
+        console.error('Error removing volunteer from dashboard:', error);
+        res.status(500).send('Server Error');
+    }
+};
+
 export {
     showUserRegistrationForm,
     processUserRegistrationForm,
@@ -123,5 +149,6 @@ export {
     requireLogin,
     requireRole,
     showDashboard,
-    showUsersPage
+    showUsersPage,
+    processDashboardRemoveVolunteer
 };

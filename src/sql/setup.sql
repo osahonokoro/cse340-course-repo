@@ -5,6 +5,7 @@
 -- ============================================
 
 -- Drop tables if they exist (for fresh setup)
+DROP TABLE IF EXISTS volunteer;
 DROP TABLE IF EXISTS project_category;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS organization;
@@ -175,6 +176,15 @@ CREATE TABLE users (
 );
 
 -- ============================================
+-- 7. Create volunteer table (many-to-many: users <-> project)
+-- ============================================
+CREATE TABLE volunteer (
+    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
+    project_id INTEGER REFERENCES project(project_id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, project_id)
+);
+
+-- ============================================
 -- Verification queries (optional — for manual testing only)
 -- Commented out so this script only performs setup when run.
 -- Uncomment locally in pgAdmin if you want to sanity-check the data.
@@ -185,6 +195,7 @@ CREATE TABLE users (
 -- SELECT * FROM project;
 -- SELECT * FROM roles;
 -- SELECT * FROM users;
+-- SELECT * FROM volunteer;
 
 -- SELECT 
 --     p.project_id,
