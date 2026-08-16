@@ -34,16 +34,21 @@ CREATE TABLE category (
 );
 
 -- ============================================
--- 3. Create project table (with foreign keys)
+-- 3. Create project table (with named foreign key constraint)
 -- ============================================
 CREATE TABLE project (
     project_id SERIAL PRIMARY KEY,
-    organization_id INTEGER NOT NULL REFERENCES organization(organization_id),
+    organization_id INTEGER NOT NULL,
     title VARCHAR(200) NOT NULL,
     description TEXT NOT NULL,
     date_needed DATE,
     status VARCHAR(50) DEFAULT 'active' NOT NULL,
-    location VARCHAR(255)
+    location VARCHAR(255),
+
+    CONSTRAINT fk_project_organization
+        FOREIGN KEY (organization_id)
+        REFERENCES organization (organization_id)
+        ON DELETE CASCADE
 );
 
 -- ============================================
@@ -66,13 +71,23 @@ VALUES
     ('Health and Wellness', 'Projects promoting physical and mental health, healthcare access');
 
 -- ============================================
--- 4. Create junction table (many-to-many)
+-- 4. Create junction table (many-to-many, named foreign key constraints)
 --    Allows one project to have multiple categories
 -- ============================================
 CREATE TABLE project_category (
-    project_id INTEGER REFERENCES project(project_id) ON DELETE CASCADE,
-    category_id INTEGER REFERENCES category(category_id) ON DELETE CASCADE,
-    PRIMARY KEY (project_id, category_id)
+    project_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
+    PRIMARY KEY (project_id, category_id),
+
+    CONSTRAINT fk_project_category_project
+        FOREIGN KEY (project_id)
+        REFERENCES project (project_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_project_category_category
+        FOREIGN KEY (category_id)
+        REFERENCES category (category_id)
+        ON DELETE CASCADE
 );
 
 -- ============================================
@@ -164,24 +179,39 @@ INSERT INTO roles (role_name, role_description) VALUES
     ('admin', 'Administrator with full system access');
 
 -- ============================================
--- 6. Create users table
+-- 6. Create users table (with named foreign key constraint)
 -- ============================================
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    role_id INTEGER REFERENCES roles(role_id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    role_id INTEGER,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_users_role
+        FOREIGN KEY (role_id)
+        REFERENCES roles (role_id)
+        ON DELETE SET NULL
 );
 
 -- ============================================
--- 7. Create volunteer table (many-to-many: users <-> project)
+-- 7. Create volunteer table (many-to-many: users <-> project, named foreign key constraints)
 -- ============================================
 CREATE TABLE volunteer (
-    user_id INTEGER REFERENCES users(user_id) ON DELETE CASCADE,
-    project_id INTEGER REFERENCES project(project_id) ON DELETE CASCADE,
-    PRIMARY KEY (user_id, project_id)
+    user_id INTEGER NOT NULL,
+    project_id INTEGER NOT NULL,
+    PRIMARY KEY (user_id, project_id),
+
+    CONSTRAINT fk_volunteer_user
+        FOREIGN KEY (user_id)
+        REFERENCES users (user_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_volunteer_project
+        FOREIGN KEY (project_id)
+        REFERENCES project (project_id)
+        ON DELETE CASCADE
 );
 
 -- ============================================
